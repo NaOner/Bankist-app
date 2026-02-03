@@ -35,8 +35,6 @@ const account4 = {
 
 const accounts = [account1, account2, account3, account4];
 
-
-
 // Elements
 const labelWelcome = document.querySelector('.welcome');
 const labelDate = document.querySelector('.date');
@@ -87,6 +85,28 @@ const displayMovement = function(movements){
 }
 
 displayMovement(account1.movements)
+
+
+const createUserName =function (accs) {
+  // const nameToUpperCase = name.toUpperCase()
+  // const nameDivided = nameToUpperCase.split(" ")
+  // const initialsArr = nameDivided.map(function(name) {
+  //     return name[0]
+  // })
+  // return initials = initialsArr.join("")
+
+  accs.forEach(function(acc){
+    acc.userName = acc.owner
+      .toUpperCase()
+      .split(" ")
+      .map(name => name[0])
+      .join("")
+  })
+}
+
+createUserName(accounts)
+console.log(accounts)
+
 
 
 /////////////////////////////////////////////////
@@ -212,14 +232,23 @@ GOOD LUCK 😀
 // }
 /////////////////////////////////////////////////
 
-// Zmiana waluty
-const  eurToUsd = 1.1
-
-const movementsUsd = account1.movements. map(function(mov) {
-  return ("USD: " + mov * eurToUsd)
-})
-
-console.log(movements)
-console.log(movementsUsd)
-
-
+// // Zmiana waluty
+// const  eurToUsd = 1.1
+//
+// const movementsUsd = account1.movements. map((mov) => {return mov * eurToUsd})
+//
+// console.log(movements)
+// console.log(movementsUsd)
+//
+// const movmentsUSDFor = [];
+// for(const mov of movements) {
+//   movmentsUSDFor.push(mov * eurToUsd)
+// }
+// console.log(movmentsUSDFor)
+//
+//
+// const movmentsDescriptions = movements.map((mov, index) => {
+//     return `Movement ${index + 1}: ${mov > 0 ? `You deposited ${mov}` : `You withdrew ${mov * -1}`}`
+// })
+//
+// console.log(movmentsDescriptions)

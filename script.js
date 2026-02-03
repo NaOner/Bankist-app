@@ -252,3 +252,16 @@ GOOD LUCK 😀
 // })
 //
 // console.log(movmentsDescriptions)
+
+
+// // .filter()
+// const deposits = movements.filter(function(mov){
+//   return mov > 0;
+// })
+//
+// const withdrawals = movements.filter(function(mov){
+//   return (mov < 0)
+// })
+//
+// console.log(deposits)
+// console.log(withdrawals)

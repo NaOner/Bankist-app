@@ -86,8 +86,38 @@ const displayMovement = function(movements){
 
 displayMovement(account1.movements)
 
+const calcDisplayBalance = function(movements) {
+  const balance = movements.reduce((acc, mov) => acc + mov, 0)
+  labelBalance.textContent = `${balance} EUR`;
+}
 
-const createUserName =function (accs) {
+calcDisplayBalance(account1.movements)
+
+
+
+const calcDisplaySummary = function(movement){
+  const incomes = movement
+      .filter(mov => mov > 0)
+      .reduce((acc, mov) => acc + mov, 0)
+
+  const out = movement
+      .filter(mov => mov < 0)
+      .reduce((acc, mov) => acc + mov, 0)
+
+  const interest = movement
+      .filter(mov => mov > 0)
+      .map(deposit => deposit * 1.2/100)
+      .filter((int, i, arr) => int >= 1)
+      .reduce((acc, mov) => acc + mov, 0)
+
+  labelSumIn.textContent = `${Math.round(incomes)}€`
+  labelSumOut.textContent = `${Math.round(out)}€`
+  labelSumInterest.textContent = `${Math.round(interest)}€`
+}
+
+calcDisplaySummary(account1.movements)
+
+const createUserName =function (acc) {
   // const nameToUpperCase = name.toUpperCase()
   // const nameDivided = nameToUpperCase.split(" ")
   // const initialsArr = nameDivided.map(function(name) {
@@ -95,7 +125,7 @@ const createUserName =function (accs) {
   // })
   // return initials = initialsArr.join("")
 
-  accs.forEach(function(acc){
+  acc.forEach(function(acc){
     acc.userName = acc.owner
       .toUpperCase()
       .split(" ")
@@ -105,7 +135,9 @@ const createUserName =function (accs) {
 }
 
 createUserName(accounts)
-console.log(accounts)
+
+
+
 
 
 
@@ -265,3 +297,48 @@ GOOD LUCK 😀
 //
 // console.log(deposits)
 // console.log(withdrawals)
+
+// const balance = movements.reduce((acc, mov) => acc + mov, 0)
+// console.log(balance)
+//
+//
+// // Maximum value
+// const maxMovement = movements.reduce((acc, mov) => {
+//   return acc > mov ? acc : mov
+// }, movements[0])
+//
+// console.log(maxMovement)
+
+
+// // Coding challenge 2
+//
+// const calcAverageHumanAge = function(arr){
+//   const humanAges = arr.map((dogAge) => {
+//     if(dogAge <= 2){
+//       return 2 * dogAge
+//     } else {
+//       return 16 + dogAge * 4
+//     }
+//   })
+//
+//   console.log("Dogs ages to human ages: " + humanAges)
+//
+//   const adults = humanAges.filter((age) => {
+//     return age >= 18
+//   })
+//   console.log("Reduced: " + adults)
+//
+//   const average = adults.reduce((acc, age) => acc + age, 0) / adults.length
+//   console.log("Average human age: " + Math.round(average))
+// }
+//
+// calcAverageHumanAge([5,2,4,1,15,8,3])
+// calcAverageHumanAge([16,6,10,5,6,1,4])
+
+// const  eurToUsd = 1.1
+// const totalDepositsUSD = Math.round(movements
+//     .filter(mov => mov > 0)
+//     .map((mov) => mov * eurToUsd)
+//     .reduce((acc, mov) => acc + mov, 0))
+//
+// console.log(totalDepositsUSD)

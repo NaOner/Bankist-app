@@ -84,29 +84,27 @@ const displayMovement = function(movements){
   })
 }
 
-displayMovement(account1.movements)
 
-const calcDisplayBalance = function(movements) {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0)
+const calcDisplayBalance = function(acc) {
+  const balance = acc.movements.reduce((acc, mov) => acc + mov, 0)
   labelBalance.textContent = `${balance} EUR`;
+  acc.balance = balance
 }
 
-calcDisplayBalance(account1.movements)
 
 
-
-const calcDisplaySummary = function(movement){
-  const incomes = movement
+const calcDisplaySummary = function(account){
+  const incomes = account.movements
       .filter(mov => mov > 0)
       .reduce((acc, mov) => acc + mov, 0)
 
-  const out = movement
+  const out = account.movements
       .filter(mov => mov < 0)
       .reduce((acc, mov) => acc + mov, 0)
 
-  const interest = movement
+  const interest = account.movements
       .filter(mov => mov > 0)
-      .map(deposit => deposit * 1.2/100)
+      .map(deposit => deposit * account.interestRate/100)
       .filter((int, i, arr) => int >= 1)
       .reduce((acc, mov) => acc + mov, 0)
 
@@ -114,8 +112,6 @@ const calcDisplaySummary = function(movement){
   labelSumOut.textContent = `${Math.round(out)}€`
   labelSumInterest.textContent = `${Math.round(interest)}€`
 }
-
-calcDisplaySummary(account1.movements)
 
 const createUserName =function (acc) {
   // const nameToUpperCase = name.toUpperCase()
@@ -137,8 +133,124 @@ const createUserName =function (acc) {
 createUserName(accounts)
 
 
+//Event handler
+
+let currentAccount
+
+// // Moja wersja
+// btnLogin.addEventListener('click', function(e) {
+//   e.preventDefault()
+//
+//   const login = inputLoginUsername.value
+//   const password = Number(inputLoginPin.value)
+//
+//
+//     const account = accounts.find(acc => acc.userName === login)
+//
+//   if(account?.pin === password){
+//     currentAccount = account
+//   } else {
+//     console.log("Bledne dane logowania")
+//     currentAccount = undefined
+//   }
+//
+//   console.log(currentAccount)
+// })
+
+function display(acc) {
+  displayMovement(acc.movements)
+
+  calcDisplayBalance(acc)
+
+  calcDisplaySummary(acc)
+}
+
+// Wersja z kursu
+btnLogin.addEventListener('click', function(e){
+  e.preventDefault()
+
+  currentAccount = accounts.find(acc => acc.userName === inputLoginUsername.value)
+
+  if(currentAccount?.pin === Number(inputLoginPin.value)){
+    console.log('LOGIN')
+    console.log(currentAccount)
+  }
+
+  //Display UI
+  labelWelcome.textContent = `Welcome back ${currentAccount.owner.split(" ")[0]}`
+
+  containerApp.style.opacity = 1
+
+  display(currentAccount)
+
+  // Clear inputs fields
+  inputLoginUsername.value = inputLoginPin.value = ''
+  inputLoginPin.blur()
+})
+
+// Transfer money
+// // Moja wersja
+// btnTransfer.addEventListener('click', function(e){
+//   e.preventDefault()
+//
+//   const amount = Number(inputTransferAmount.value)
+//   const receiverAcc = accounts.find(acc => acc.userName === inputTransferTo.value)
+//
+//
+//   if (amount > 0 && amount <= currentAccount.balance && receiverAcc) {
+//     receiverAcc.movements.push(amount)
+//     currentAccount.movements.push(amount * -1)
+//
+//     displayMovement(currentAccount.movements)
+//     calcDisplayBalance(currentAccount)
+//
+//     inputTransferTo.value = ''
+//     inputTransferAmount.value = ''
+//
+//   } else {
+//     console.log("Wystapil blad")
+//
+//     inputTransferTo.value = ''
+//     inputTransferAmount.value = ''
+//   }
+// })
+
+// Wersja z kursu
+btnTransfer.addEventListener('click', function(e){
+  e.preventDefault()
+  const amount = Number(inputTransferAmount.value)
+  const receiverAcc = accounts.find(acc => acc.userName === inputTransferTo.value)
+
+  if (amount > 0
+      && currentAccount.balance >= amount &&
+      receiverAcc &&
+      receiverAcc?.userName !== currentAccount.userName) {
+    currentAccount.movements.push(amount * -1)
+    receiverAcc.movements.push(amount)
+
+    display(currentAccount)
+
+    inputTransferTo.value = ''
+    inputTransferAmount.value = ''
+  } else {
+  console.log("Wystapil blad")
+
+  inputTransferTo.value = ''
+  inputTransferAmount.value = ''
+}
+})
+
+// Usuniecie konta
+btnClose.addEventListener('click', function(e){
+  e.preventDefault()
+
+  if(inputCloseUsername.value === currentAccount.userName
+      && Number(inputClosePin.value) === currentAccount.pin){
+
+  }
 
 
+})
 
 
 /////////////////////////////////////////////////
@@ -342,3 +454,34 @@ GOOD LUCK 😀
 //     .reduce((acc, mov) => acc + mov, 0))
 //
 // console.log(totalDepositsUSD)
+
+
+// // Coding challenge 3
+// const calcAverageHumanAge = (ages) => {
+//   const average = ages.map((dogAge) => {
+//     return dogAge <= 2 ? 2 * dogAge : 16 + dogAge * 4
+//   }).filter((age) => {
+//     return age >= 18
+//   }).reduce((acc, age, i, arr) => {
+//     return acc + age / arr.length
+//   }, 0)
+//   return Math.round(average)
+// }
+//
+// console.log(calcAverageHumanAge([5,2,4,1,15,8,3]))
+// console.log(calcAverageHumanAge([16,6,10,5,6,1,4]))
+
+// console.log(movements) // [200, 450, -400, 3000, -650]
+// console.log(movements.find(mov => mov > 500)) // 3000
+// console.log(movements.find(mov => mov > 0)) // 200
+// console.log(movements.find(mov => mov > 200)) // 450
+// console.log(movements.find(mov => mov < 0)) // -400
+// console.log(movements.find(mov => mov < -400)) // -650
+//
+// console.log(accounts)
+// const account = accounts.find(acc => acc.owner === "Jessica Davis")
+// console.log(account)
+//
+// for(let mov of movements) {
+//   console.log(movements.find(mov => mov > 0))
+// }

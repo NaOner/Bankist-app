@@ -169,23 +169,25 @@ function display(acc) {
 btnLogin.addEventListener('click', function(e){
   e.preventDefault()
 
-  currentAccount = accounts.find(acc => acc.userName === inputLoginUsername.value)
+  if (accounts.find(acc => acc.userName === inputLoginUsername.value && acc.pin === Number(inputLoginPin.value))){
 
-  if(currentAccount?.pin === Number(inputLoginPin.value)){
-    console.log('LOGIN')
-    console.log(currentAccount)
+    currentAccount = accounts.find(acc => acc.userName === inputLoginUsername.value)
+
+    //Display UI
+    labelWelcome.textContent = `Welcome back ${currentAccount.owner.split(" ")[0]}`
+
+    containerApp.style.opacity = 1
+
+    display(currentAccount)
+
+    // Clear inputs fields
+    inputLoginUsername.value = inputLoginPin.value = ''
+    inputLoginPin.blur()
+
+
+  } else {
+    alert("Błędne dane logowania")
   }
-
-  //Display UI
-  labelWelcome.textContent = `Welcome back ${currentAccount.owner.split(" ")[0]}`
-
-  containerApp.style.opacity = 1
-
-  display(currentAccount)
-
-  // Clear inputs fields
-  inputLoginUsername.value = inputLoginPin.value = ''
-  inputLoginPin.blur()
 })
 
 // Transfer money
@@ -230,14 +232,12 @@ btnTransfer.addEventListener('click', function(e){
 
     display(currentAccount)
 
-    inputTransferTo.value = ''
-    inputTransferAmount.value = ''
   } else {
-  console.log("Wystapil blad")
+  alert("Błąd podczas przelewu")
 
+}
   inputTransferTo.value = ''
   inputTransferAmount.value = ''
-}
 })
 
 // Usuniecie konta
@@ -247,11 +247,44 @@ btnClose.addEventListener('click', function(e){
   if(inputCloseUsername.value === currentAccount.userName
       && Number(inputClosePin.value) === currentAccount.pin){
 
+    const index = accounts.findIndex(acc => acc.userName === currentAccount.userName)
+
+    accounts.splice(index, 1)
+
+    containerApp.style.opacity = 0
+
+  } else {
+
+    alert("Błąd podczas usuwania konta")
+
   }
 
+  inputClosePin.value = ''
+  inputCloseUsername.value = ''
 
 })
 
+
+// Loan
+// Moja wersja
+btnLoan.addEventListener('click', function(e){
+  e.preventDefault()
+
+  const loneAmount = Number(inputLoanAmount.value)
+
+  if(loneAmount > 0 && movements.some(mov => mov >= (loneAmount / 10))){
+    currentAccount.balance += loneAmount
+    currentAccount.movements.push(loneAmount)
+
+  } else {
+    alert("Błąd podczas pożyczki")
+  }
+
+  inputLoanAmount.value = ""
+
+  display(currentAccount)
+
+})
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -485,3 +518,218 @@ GOOD LUCK 😀
 // for(let mov of movements) {
 //   console.log(movements.find(mov => mov > 0))
 // }
+
+// console.log(movements)
+// const lastWithdrawal = movements.findLast(acc => acc < 0)
+// console.log(lastWithdrawal)
+
+
+// // `Your latest large
+// console.log(movements)
+// const latestLargeMovement = movements.findLast(acc => Math.abs(acc) > 2000)
+// const latestLargeMovementIndex = movements.findIndex(mov => mov === latestLargeMovement )
+//
+// const lastIndex = movements.findLastIndex(mov => mov)
+//
+// console.log(`Your latest large movement was ${latestLargeMovement} and was ${lastIndex - latestLargeMovementIndex} movement ago`)
+
+
+// console.log(movements)
+// console.log(movements.includes(-130)) // true
+
+// // SOME
+// console.log(movements)
+// console.log(movements.some(mov => mov > 0)) //true
+// console.log(movements.some(mov => mov > 2000)) // true
+// console.log(movements.some(mov => mov > 5000)) // false
+
+// // EVERY
+// console.log(account4.movements)
+// console.log(account4.movements.every(mov => mov > 0)) // true
+//
+// console.log(account1.movements)
+// console.log(account1.movements.every(mov => mov > 0)) // false
+//
+// // Separate callback
+// const deposit = mov => mov > 0
+// console.log(movements.some(deposit))
+// console.log(movements.every(deposit))
+// console.log(movements.filter(deposit))
+
+// //
+// const arr = [[1,2,3],[4,5,6],7,8,9]
+//
+// console.log(arr.flat()) // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+//
+// const flatArr = arr.flat()
+// console.log(flatArr) // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+//
+//
+// const arrDeep = [[[1,2],3],[4,[5,6]],7,8,9]
+// console.log(arrDeep.flat()) // [[1, 2], 3, 4, [5, 6], 7, 8, 9
+//
+// console.log(arrDeep.flat(2)) // 1, 2, 3, 4, 5, 6, 7, 8, 9
+//
+// const accountMovements = accounts.map(acc => acc.movements)
+// console.log(accountMovements)
+//
+// const allMovements = movements.flat()
+// console.log(allMovements)
+// allMovements.reduce((acc,mov) => acc + mov, 0)
+//
+
+// ///////////////////////////////////////
+// // Coding Challenge #4
+//
+// /*
+// This time, Julia and Kate are studying the activity levels of different dog breeds.
+//
+// YOUR TASKS:
+// 1. Store the the average weight of a "Husky" in a variable "huskyWeight"
+// 2. Find the name of the only breed that likes both "running" and "fetch" ("dogBothActivities" variable)
+// 3. Create an array "allActivities" of all the activities of all the dog breeds
+// 4. Create an array "uniqueActivities" that contains only the unique activities (no activity repetitions). HINT: Use a technique with a special data structure that we studied a few sections ago.
+// 5. Many dog breeds like to swim. What other activities do these dogs like?
+// Store all the OTHER activities these breeds like to do in a unique array called "swimmingAdjacent".
+// 6. Do all the breeds have an average weight of 10kg or more? Log to the console whether "true" or "false".
+// 7. Are there any breeds that are "active"? "Active" means that the dog has 3 or more activities. Log to the console whether "true" or "false".
+//
+// BONUS: What's the average weight of the heaviest breed that likes to fetch? HINT: Use the "Math.max" method along with the ... operator.
+//
+// TEST DATA:
+// */
+//
+//
+// const breeds = [
+//   {
+//     breed: 'German Shepherd',
+//     averageWeight: 32,
+//     activities: ['fetch', 'swimming'],
+//   },
+//   {
+//     breed: 'Dalmatian',
+//     averageWeight: 24,
+//     activities: ['running', 'fetch', 'agility'],
+//   },
+//   {
+//     breed: 'Labrador',
+//     averageWeight: 28,
+//     activities: ['swimming', 'fetch'],
+//   },
+//   {
+//     breed: 'Beagle',
+//     averageWeight: 12,
+//     activities: ['digging', 'fetch'],
+//   },
+//   {
+//     breed: 'Husky',
+//     averageWeight: 26,
+//     activities: ['running', 'agility', 'swimming'],
+//   },
+//   {
+//     breed: 'Bulldog',
+//     averageWeight: 36,
+//     activities: ['sleeping'],
+//   },
+//   {
+//     breed: 'Poodle',
+//     averageWeight: 18,
+//     activities: ['agility', 'fetch'],
+//   },
+// ];
+//
+// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// // 1. Store the average weight of a "Husky" in a variable "huskyWeight"
+// // // Moja wersja
+// // const huskyWeight = breeds.reduce((acc, ele) => {
+// //   if(ele.breed === 'Husky'){
+// //     acc += ele.averageWeight
+// //   }
+// //
+// //   return acc
+// // }, 0)
+// //
+// // console.log(huskyWeight)
+//
+// // Wersja z kursu
+// const huskyWeight2 = breeds.find((element) => element.breed === 'Husky').averageWeight
+// console.log(huskyWeight2)
+//
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// // 2.Find the name of the only breed that likes both "running" and "fetch" ("dogBothActivities" variable)
+// // // Moja wersja
+// // const dogBothActivities = breeds.filter((element) => {return element.activities.includes("running") && element.activities.includes("fetch")})
+// // console.log(dogBothActivities)
+//
+// // Wersja z kursu
+// const dogBothActivities2 = breeds.find((breed) => breed.activities.includes('running') && breed.activities.includes('fetch')).breed
+//
+// console.log(`2: ${dogBothActivities2}`)
+//
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// // 3. Create an array "allActivities" of all the activities of all the dog breeds
+// // // Moja wersja
+// // const allActivities = breeds.reduce((acc, breed) => {
+// //   if(acc.find(activity => activity === breed.activities)){
+// //   } else {
+// //     acc.push(breed.activities)
+// //   }
+// //   return acc.flat()
+// // }, [])
+// //
+// // console.log(allActivities)
+//
+// // Wersja z kursu
+// const allActivities2 = breeds.flatMap((breed) => breed.activities)
+// console.log(`3: ${allActivities2} `)
+//
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// // 4. Create an array "uniqueActivities" that contains only the unique activities (no activity repetitions).
+// // HINT: Use a technique with a special data structure that we studied a few sections ago.
+// const uniqueActivities = [...new Set(allActivities2)]
+// console.log(`4: ${uniqueActivities}`)
+//
+//
+// // 5. Many dog breeds like to swim. What other activities do these dogs like?
+// const swimmingAdjacent = breeds.reduce((acc, breed) => {
+//
+//   if(breed.activities.find((element) => element === 'swimming')){
+//     breed.activities.splice(breed.activities.indexOf('swimming'), 1)
+//     acc.push(breed.activities)
+//   }
+//   return acc.flat()
+//   }, [])
+//
+// console.log(swimmingAdjacent)
+//
+// // 6. Do all the breeds have an average weight of 10kg or more?
+// // Log to the console whether "true" or "false".
+// const averageWeightOfAllBreeds = breeds.reduce((acc, breed) => {
+//   acc += breed.averageWeight
+//   if(acc >= 10)
+//   return acc
+// } , 0)/breeds.length
+//
+// console.log(averageWeightOfAllBreeds)
+// console.log(averageWeightOfAllBreeds >= 10)
+//
+//
+// // 7. Are there any breeds that are "active"?
+// // "Active" means that the dog has 3 or more activities.
+// // Log to the console whether "true" or "false".
+// const areActive = breeds.reduce((acc, breed) => {
+//   if(breed.activities.length >= 3){
+//     acc.push(true)
+//   } else {
+//     acc.push(false)
+//   }
+//   return acc
+// }, [])
+//
+// console.log(areActive)
+//
+//
+
+
+// Sortowanie

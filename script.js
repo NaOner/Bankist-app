@@ -862,80 +862,81 @@ const dogs = [
 ];
 
 // 1 add new variable recFood
-dogs.map((dog) => {
+console.log("1")
+dogs.forEach((dog) => {
   dog.recFood = Math.round(dog.weight ** 0.75 * 28);
   return dog;
 })
-
 console.log(dogs)
 
-// 2
-// Find Sarah's dog'
-  const sarahDog = dogs.find((dog) => dog.owners.find(owner => owner === 'Sarah'))
+// 2. Find Sarah's dog and log to the console whether it's eating too much or too little.
+console.log("2")
+const sarahDog = dogs.find((dog) => dog.owners.find(owner => owner === 'Sarah'))
 
 
-  const toMuchOrToLittle = (dog) => {
-    if (dog.curFood <= (dog.recFood * 0.90)) {
-      return "too little"
-    } else if (dog.curFood >= (dog.recFood * 1.10)) {
-      return "too much"
-    } else {
-      return "exact"
-    }
+const toMuchOrToLittle = (dog) => {
+  if (dog.curFood <= (dog.recFood * 0.90)) {
+    return "too little"
+  } else if (dog.curFood >= (dog.recFood * 1.10)) {
+    return "too much"
+  } else {
+    return "exact"
   }
-  console.log(`Sarah's dog is eating ${toMuchOrToLittle(sarahDog)}`)
-
-
-//3
-  const {eatingTooMuch, eatingTooLittle, eatingExactly} = dogs.reduce((acc, dog) => {
-    if (dog.curFood < (dog.recFood * 0.90)) {
-      acc.eatingTooLittle.push(dog)
-    } else if (dog.curFood > (dog.recFood * 1.10)) {
-      acc.eatingTooMuch.push(dog)
-    } else {
-      acc.eatingExactly.push(dog)
-    }
-    return acc
-  }, {eatingTooMuch: [], eatingTooLittle: [], eatingExactly: []})
-
-  console.log("Dogs that eats to much:")
-  console.log(eatingTooMuch)
-
-  console.log("Dogs that eats to little:")
-  console.log(eatingTooLittle)
-
-// 4
-// Log a string to the console for each array created in 3.,
-// like this: "Matilda and Alice and Bob's dogs eat too much!" and "Sarah and John and Michael's dogs eat too little!"
-const displayArr = (arr) => {
-
-  return arr.reduce((acc, dog) => {
-    const owners = dog.owners.join(" and ")
-
-    const howMuch = toMuchOrToLittle(dog)
-
-    acc.push(`${owners}'s dogs eat ${howMuch}!`)
-
-    return acc
-  }, []).join(" and ")
 }
+console.log(`Sarah's dog is eating ${toMuchOrToLittle(sarahDog)}`)
 
 
-console.log(displayArr(eatingTooMuch))
-console.log(displayArr(eatingTooLittle))
+// 3. Create an array containing all owners of dogs who eat too much (ownersTooMuch)
+// and an array with all owners of dogs who eat too little (ownersTooLittle).
+console.log("3")
+  const {ownersTooMuch, ownersTooLittle} = dogs
+      .reduce((acc, dog) => {
+
+    if (dog.curFood < (dog.recFood * 0.90)) {
+      acc.ownersTooLittle
+          .push(dog.owners
+              .flat()
+          )
+    } else if (dog.curFood > (dog.recFood * 1.10)) {
+      acc.ownersTooMuch
+          .push(dog.owners
+              .flat()
+          )
+    }
+
+    return acc
+
+  }, {ownersTooMuch: [], ownersTooLittle: [] })
+
+// 4. Log a string to the console for each array created in 3.,
+// like this: "Matilda and Alice and Bob's dogs eat too much!" and "Sarah and John and Michael's dogs eat too little!"
+console.log("4")
+console.log(`${ownersTooMuch.flat().join(" and ")}'s dogs eat too much!`)
+console.log(`${ownersTooLittle.flat().join(" and ")}'s dogs eat too little!`)
 
 
 //5. Log to the console whether there is ANY dog eating EXACTLY the amount of food that is recommended (just true or fal
-console.log(dogs.some((dog) => dog.curFood === dog.recFood))
+console.log("5")
+console.log(dogs.some( ( dog )  => dog.curFood === dog.recFood ) )
 
 //6. Log to the console whether ALL of the dogs are eating an OKAY amount of food (just true or false)
-console.log(dogs.every((dog) => dog.curFood >= (dog.recFood * 0.90) && dog.curFood <= (dog.recFood * 1.10)))
+console.log("6")
+const checkEatingOkay = (dog) => dog.curFood >= (dog.recFood * 0.90) && dog.curFood <= (dog.recFood * 1.10)
+console.log(dogs.every(checkEatingOkay))
 
-console.log(dogs.sort((a,b) => b.owners.length - a.owners.length))
+console.log(dogs.toSorted((a,b) => b.owners.length - a.owners.length))
 
 // 7. Create an array containing the dogs that are eating an OKAY amount of food (try to reuse the condition used in 6.)
-const dogsThatEatOkAmountOfFood = dogs.filter((dog) => dog.curFood >= (dog.recFood * 0.90) && dog.curFood <= (dog.recFood * 1.10))
+const dogsThatEatOkAmountOfFood = dogs.filter(checkEatingOkay)
+console.log("7")
 console.log(dogsThatEatOkAmountOfFood)
 
+//9. Group the dogs by the number of owners they have
+console.log("9")
+const groupedDogs = Object.groupBy(dogs, (dog) => dog.owners.length)
+console.log(groupedDogs)
+
+
 //10. Sort the dogs array by recommended food portion in an ascending order. Make sure to NOT mutate the original array!
-console.log(dogs.toSorted((a,b) => a.recFood - b.recFood))
+console.log("10")
+console.log(...(dogs.toSorted((a,b) => a.recFood - b.recFood)))
